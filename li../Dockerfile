@@ -2,13 +2,14 @@ FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
+COPY lifepilot/.mvn/ .mvn/
+COPY lifepilot/mvnw .
+COPY lifepilot/pom.xml .
 
 RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline -B
 
-COPY src ./src
+COPY lifepilot/src ./src
 
 RUN ./mvnw clean package -DskipTests
 
