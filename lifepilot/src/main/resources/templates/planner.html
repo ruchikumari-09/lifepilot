@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tasks | LifePilot AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 245px;
+            height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding: 24px 16px;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 40px;
+            color: #2563eb;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-title {
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .menu-icon {
+            width: 25px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 16px;
+            right: 16px;
+        }
+
+        .logout a:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 245px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+        }
+
+        .page-title h1 {
+            font-size: 21px;
+            margin-bottom: 3px;
+        }
+
+        .page-title p {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .profile-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-info span {
+            color: #94a3b8;
+            font-size: 10px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            padding: 32px 35px;
+            max-width: 1400px;
+        }
+
+        .heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .heading h2 {
+            font-size: 27px;
+            margin-bottom: 6px;
+        }
+
+        .heading p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .date-badge {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #dbeafe;
+            padding: 9px 13px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* LAYOUT */
+
+        .planner-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 0.65fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 17px;
+            padding: 23px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+        }
+
+        /* DATE */
+
+        .date-form {
+            display: flex;
+            gap: 9px;
+            margin-bottom: 20px;
+        }
+
+        .date-form input {
+            flex: 1;
+            height: 42px;
+            border: 1px solid #dbe2ea;
+            border-radius: 9px;
+            padding: 0 12px;
+            color: #334155;
+        }
+
+        .date-btn {
+            border: none;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 9px;
+            padding: 0 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* TASK */
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .task:last-child {
+            border-bottom: none;
+        }
+
+        .task-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .task.done .task-check {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .task-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .task.done .task-title {
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .task-meta {
+            margin-top: 5px;
+            display: flex;
+            gap: 10px;
+            color: #94a3b8;
+            font-size: 10px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 7px;
+        }
+
+        .action-btn {
+            width: 31px;
+            height: 31px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .complete-btn {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .delete-btn {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px 15px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .empty-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* ADD TASK */
+
+        .add-card {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            border: 1px solid #dbe2ea;
+            border-radius: 9px;
+            padding: 11px 12px;
+            font-size: 13px;
+            color: #334155;
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 75px;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px #dbeafe;
+        }
+
+        .date-time {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .add-btn {
+            width: 100%;
+            height: 44px;
+            border: none;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .add-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* PENDING */
+
+        .pending-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .pending-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .pending-item:last-child {
+            border-bottom: none;
+        }
+
+        .pending-title {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pending-date {
+            color: #94a3b8;
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0;
+            }
+
+            .brand span,
+            .menu-title,
+            .menu a span {
+                display: none;
+            }
+
+            .menu a {
+                justify-content: center;
+            }
+
+            .logout {
+                left: 10px;
+                right: 10px;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .planner-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .profile-info {
+                display: none;
+            }
+
+            .content {
+                padding: 25px 18px;
+            }
+
+            .heading {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .date-time {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ✦
+            </div>
+
+            <span>LifePilot AI</span>
+
+        </div>
+
+        <div class="menu-title">
+            Workspace
+        </div>
+
+        <div class="menu">
+
+            <a href="/dashboard">
+
+                <div class="menu-icon">⌂</div>
+
+                <span>Dashboard</span>
+
+            </a>
+
+            <a href="/planner" class="active">
+
+                <div class="menu-icon">✓</div>
+
+                <span>Tasks</span>
+
+            </a>
+
+            <a href="/planner" class="active">
+
+                <div class="menu-icon">◷</div>
+
+                <span>Daily Planner</span>
+
+            </a>
+
+        </div>
+
+        <div class="logout">
+
+            <div class="menu">
+
+                <a href="/logout">
+
+                    <div class="menu-icon">↪</div>
+
+                    <span>Logout</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="page-title">
+
+                <h1>Tasks & Planner</h1>
+
+                <p>Plan your day and stay productive</p>
+
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <div class="heading">
+
+                <div>
+
+                    <h2>Daily Planner</h2>
+
+                    <p>Manage your tasks for the selected day.</p>
+
+                </div>
+
+                <div class="date-badge" th:text="${today}">
+                    Today
+                </div>
+
+            </div>
+
+
+            <div class="planner-grid">
+
+
+                <!-- LEFT -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <h3>
+                            Tasks for the day
+                        </h3>
+
+                    </div>
+
+
+                    <!-- DATE SELECT -->
+
+                    <form action="/planner" method="get" class="date-form">
+
+                        <input type="date" name="date" th:value="${today}">
+
+                        <button type="submit" class="date-btn">
+
+                            View
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- TASK LIST -->
+
+                    <div class="task-list" th:if="${tasks != null and !tasks.isEmpty()}">
+
+                        <div class="task" th:each="task : ${tasks}" th:classappend="${task.completed} ? ' done' : ''">
+
+                            <div class="task-check"></div>
+
+
+                            <div class="task-content">
+
+                                <div class="task-title" th:text="${task.title}">
+                                    Task
+                                </div>
+
+                                <div class="task-meta">
+
+                                    <span th:if="${task.taskTime != null}" th:text="${task.taskTime}">
+                                        Time
+                                    </span>
+
+                                    <span th:if="${task.description != null and !task.description.isEmpty()}"
+                                        th:text="${task.description}">
+                                        Description
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="task-actions">
+
+                                <a class="action-btn complete-btn" th:href="@{/planner/toggle(id=${task.id})}"
+                                    title="Complete / Undo">
+
+                                    ✓
+
+                                </a>
+
+                                <a class="action-btn delete-btn" th:href="@{/planner/delete(id=${task.id})}"
+                                    title="Delete" onclick="return confirm('Delete this task?');">
+
+                                    ×
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMPTY -->
+
+                    <div class="empty" th:if="${tasks == null or tasks.isEmpty()}">
+
+                        <div class="empty-icon">
+                            ✓
+                        </div>
+
+                        No tasks for this day.
+
+                        <br>
+
+                        Add a task from the panel.
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT -->
+
+                <div>
+
+
+                    <!-- ADD TASK -->
+
+                    <div class="card add-card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Add New Task
+                            </h3>
+
+                        </div>
+
+
+                        <form action="/planner/add" method="post">
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Task Title
+                                </label>
+
+                                <input type="text" name="title" placeholder="What do you need to do?" required>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Description
+                                </label>
+
+                                <textarea name="description" placeholder="Add a short description..."></textarea>
+
+                            </div>
+
+
+                            <div class="date-time">
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Date
+                                    </label>
+
+                                    <input type="date" name="taskDate" th:value="${today}" required>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Time
+                                    </label>
+
+                                    <input type="time" name="taskTime">
+
+                                </div>
+
+                            </div>
+
+
+                            <button type="submit" class="add-btn">
+
+                                + Add Task
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- PENDING -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Pending Tasks
+                            </h3>
+
+                        </div>
+
+
+                        <div class="pending-list" th:if="${pendingTasks != null and !pendingTasks.isEmpty()}">
+
+                            <div class="pending-item" th:each="task : ${pendingTasks}">
+
+                                <div class="pending-title" th:text="${task.title}">
+                                    Task
+                                </div>
+
+                                <div class="pending-date">
+
+                                    <span th:text="${task.taskDate}">
+                                        Date
+                                    </span>
+
+                                    <span th:if="${task.taskTime != null}" th:text="' · ' + ${task.taskTime}">
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="empty" th:if="${pendingTasks == null or pendingTasks.isEmpty()}">
+
+                            No pending tasks 🎉
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

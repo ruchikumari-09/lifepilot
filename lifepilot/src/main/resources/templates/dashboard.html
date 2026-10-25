@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | LifePilot AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 245px;
+            height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding: 24px 16px;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 28px;
+            color: #2563eb;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* PROFILE IN SIDEBAR */
+
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 12px;
+            margin-bottom: 28px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .sidebar-profile:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .sidebar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .sidebar-profile-info {
+            min-width: 0;
+        }
+
+        .sidebar-profile-info strong {
+            display: block;
+            color: #0f172a;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-profile-info span {
+            display: block;
+            color: #94a3b8;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .profile-arrow {
+            margin-left: auto;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* MENU */
+
+        .menu-title {
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .menu-icon {
+            width: 25px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        /* LOGOUT */
+
+        .logout {
+            position: absolute;
+            bottom: 25px;
+            left: 16px;
+            right: 16px;
+        }
+
+        .logout a:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 245px;
+            min-height: 100vh;
+        }
+
+        /* ================= TOPBAR ================= */
+
+        .topbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            padding: 0 35px;
+        }
+
+        /* Dashboard heading removed */
+
+        /* ================= CONTENT ================= */
+
+        .content {
+            padding: 32px 35px;
+            max-width: 1450px;
+        }
+
+        .welcome {
+            margin-bottom: 28px;
+        }
+
+        .welcome h2 {
+            font-size: 27px;
+            margin-bottom: 7px;
+        }
+
+        .welcome h2 span {
+            color: #2563eb;
+        }
+
+        .welcome p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .today-date {
+            margin-top: 12px;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* ================= STATS ================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 21px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+        }
+
+        .stat-info p {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .stat-info h3 {
+            font-size: 27px;
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 12px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2563eb;
+            font-size: 19px;
+        }
+
+        .completed .stat-icon {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .pending .stat-icon {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+        .goals .stat-icon {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        .habits .stat-icon {
+            background: #fdf2f8;
+            color: #db2777;
+        }
+
+        .expenses .stat-icon {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        /* ================= DASHBOARD GRID ================= */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 0.8fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 17px;
+            padding: 23px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 19px;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+        }
+
+        .card-header a {
+            text-decoration: none;
+            color: #2563eb;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ================= TASKS ================= */
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .task:last-child {
+            border-bottom: none;
+        }
+
+        .task-check {
+            width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            flex-shrink: 0;
+        }
+
+        .task-details {
+            min-width: 0;
+        }
+
+        .task-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .task-description {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .task.done .task-check {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .task.done .task-title {
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 35px 10px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* ================= OVERVIEW ================= */
+
+        .overview {
+            margin-top: 20px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .overview-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .overview-item p {
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .overview-item h4 {
+            font-size: 19px;
+        }
+
+        .overview-item a {
+            display: inline-block;
+            margin-top: 7px;
+            color: #2563eb;
+            font-size: 10px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        /* ================= AI CARD ================= */
+
+        .ai-card {
+            background: linear-gradient(145deg, #eff6ff, #f5f3ff);
+            border: 1px solid #dbeafe;
+            border-radius: 17px;
+            padding: 23px;
+            margin-bottom: 20px;
+        }
+
+        .ai-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 13px;
+        }
+
+        .ai-icon {
+            width: 39px;
+            height: 39px;
+            border-radius: 11px;
+            background: white;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .ai-heading h3 {
+            font-size: 15px;
+        }
+
+        .ai-heading span {
+            display: block;
+            color: #818cf8;
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .ai-card p {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 17px;
+        }
+
+        .ai-button {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            background: #4f46e5;
+            color: white;
+            padding: 11px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .ai-button:hover {
+            background: #4338ca;
+        }
+
+        /* ================= QUICK ACTIONS ================= */
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .quick-actions a {
+            text-decoration: none;
+            color: #475569;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px 8px;
+            border-radius: 9px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .quick-actions a:hover {
+            color: #2563eb;
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 1100px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .overview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0;
+            }
+
+            .brand span,
+            .sidebar-profile-info,
+            .profile-arrow,
+            .menu-title,
+            .menu a span {
+                display: none;
+            }
+
+            .sidebar-profile {
+                justify-content: center;
+                padding: 8px;
+            }
+
+            .sidebar-avatar {
+                width: 38px;
+                height: 38px;
+            }
+
+            .menu a {
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .logout {
+                left: 10px;
+                right: 10px;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .topbar {
+                height: 20px;
+                border-bottom: none;
+            }
+
+            .content {
+                padding: 25px 18px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .welcome h2 {
+                font-size: 23px;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ✦
+            </div>
+
+            <span>
+                LifePilot AI
+            </span>
+
+        </div>
+
+
+        <!-- USER PROFILE -->
+
+        <a href="/profile" class="sidebar-profile">
+
+            <div class="sidebar-avatar" th:text="${user.name != null and !user.name.isEmpty()
+                 ? user.name.substring(0,1).toUpperCase() : 'U'}">
+                U
+            </div>
+
+            <div class="sidebar-profile-info">
+
+                <strong th:text="${user.name}">
+                    Test User
+                </strong>
+
+                <span>
+                    LifePilot member
+                </span>
+
+            </div>
+
+            <div class="profile-arrow">
+                →
+            </div>
+
+        </a>
+
+
+        <!-- WORKSPACE -->
+
+        <div class="menu-title">
+            Workspace
+        </div>
+
+
+        <div class="menu">
+
+            <!-- MY PROFILE -->
+
+            <a href="/profile" class="active">
+
+                <div class="menu-icon">
+                    ♙
+                </div>
+
+                <span>
+                    My Profile
+                </span>
+
+            </a>
+
+
+            <!-- TASKS -->
+
+            <a href="/planner">
+
+                <div class="menu-icon">
+                    ✓
+                </div>
+
+                <span>
+                    Tasks
+                </span>
+
+            </a>
+
+
+            <!-- DAILY PLANNER -->
+
+            <a href="/planner">
+
+                <div class="menu-icon">
+                    ◷
+                </div>
+
+                <span>
+                    Daily Planner
+                </span>
+
+            </a>
+
+
+            <!-- GOALS -->
+
+            <a href="/goals">
+
+                <div class="menu-icon">
+                    🎯
+                </div>
+
+                <span>
+                    Goals
+                </span>
+
+            </a>
+
+
+            <!-- HABITS -->
+
+            <a href="/habits">
+
+                <div class="menu-icon">
+                    🔥
+                </div>
+
+                <span>
+                    Habits
+                </span>
+
+            </a>
+
+
+            <!-- NOTES -->
+
+            <a href="/notes">
+
+                <div class="menu-icon">
+                    📝
+                </div>
+
+                <span>
+                    Notes
+                </span>
+
+            </a>
+
+
+            <!-- EXPENSES -->
+
+            <a href="/expenses">
+
+                <div class="menu-icon">
+                    ₹
+                </div>
+
+                <span>
+                    Expenses
+                </span>
+
+            </a>
+
+
+            <!-- AI -->
+
+            <a href="/ai">
+
+                <div class="menu-icon">
+                    ✦
+                </div>
+
+                <span>
+                    AI Assistant
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <!-- LOGOUT -->
+
+        <div class="logout">
+
+            <div class="menu">
+
+                <a href="/logout">
+
+                    <div class="menu-icon">
+                        ↪
+                    </div>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <!--
+            Dashboard title aur right-side profile
+            intentionally removed.
+        -->
+
+        <header class="topbar">
+        </header>
+
+
+        <!-- ================= CONTENT ================= -->
+
+        <section class="content">
+
+
+            <!-- WELCOME -->
+
+            <div class="welcome">
+
+                <h2>
+
+                    Good to see you,
+
+                    <span th:text="${user.name}">
+                        User
+                    </span>!
+
+                </h2>
+
+                <p>
+                    Here's what's happening with your day.
+                </p>
+
+                <div class="today-date">
+
+                    📅 Today:
+
+                    <span th:text="${today}">
+                        2026-10-24
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= STATISTICS ================= -->
+
+            <div class="stats">
+
+
+                <!-- TOTAL TASKS -->
+
+                <div class="stat-card">
+
+                    <div class="stat-info">
+
+                        <p>
+                            Total Tasks
+                        </p>
+
+                        <h3 th:text="${totalTasks}">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+
+                <!-- COMPLETED -->
+
+                <div class="stat-card completed">
+
+                    <div class="stat-info">
+
+                        <p>
+                            Completed
+                        </p>
+
+                        <h3 th:text="${completedTasks}">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+
+                <!-- PENDING -->
+
+                <div class="stat-card pending">
+
+                    <div class="stat-info">
+
+                        <p>
+                            Pending
+                        </p>
+
+                        <h3 th:text="${pendingTasks}">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        ◷
+                    </div>
+
+                </div>
+
+
+                <!-- GOALS -->
+
+                <div class="stat-card goals">
+
+                    <div class="stat-info">
+
+                        <p>
+                            Total Goals
+                        </p>
+
+                        <h3 th:text="${totalGoals}">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        🎯
+                    </div>
+
+                </div>
+
+
+                <!-- HABITS -->
+
+                <div class="stat-card habits">
+
+                    <div class="stat-info">
+
+                        <p>
+                            Total Habits
+                        </p>
+
+                        <h3 th:text="${totalHabits}">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        🔥
+                    </div>
+
+                </div>
+
+
+                <!-- EXPENSE -->
+
+                <div class="stat-card expenses">
+
+                    <div class="stat-info">
+
+                        <p>
+                            Total Expenses
+                        </p>
+
+                        <h3>
+
+                            ₹<span th:text="${#numbers.formatDecimal(totalExpense, 1, 2)}">
+                                0.00
+                            </span>
+
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        ₹
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= DASHBOARD GRID ================= -->
+
+            <div class="dashboard-grid">
+
+
+                <!-- LEFT COLUMN -->
+
+                <div>
+
+
+                    <!-- TODAY TASKS -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Today's Tasks
+                            </h3>
+
+                            <a href="/planner">
+                                View Planner →
+                            </a>
+
+                        </div>
+
+
+                        <div class="task-list" th:if="${todayTasks != null and !todayTasks.isEmpty()}">
+
+                            <div class="task" th:each="task : ${todayTasks}"
+                                th:classappend="${task.completed} ? ' done' : ''">
+
+                                <div class="task-check"></div>
+
+                                <div class="task-details">
+
+                                    <div class="task-title" th:text="${task.title}">
+                                        Task
+                                    </div>
+
+                                    <div class="task-description"
+                                        th:if="${task.description != null and !task.description.isEmpty()}"
+                                        th:text="${task.description}">
+                                        Description
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="empty" th:if="${todayTasks == null or todayTasks.isEmpty()}">
+
+                            No tasks planned for today.
+
+                            <br><br>
+
+                            <a href="/planner" style="color:#2563eb;text-decoration:none;font-weight:700;">
+
+                                + Add your first task
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRODUCTIVITY OVERVIEW -->
+
+                    <div class="card overview">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Productivity Overview
+                            </h3>
+
+                        </div>
+
+
+                        <div class="overview-grid">
+
+
+                            <!-- GOALS -->
+
+                            <div class="overview-item">
+
+                                <p>
+                                    Goals Completed
+                                </p>
+
+                                <h4>
+
+                                    <span th:text="${completedGoals}">
+                                        0
+                                    </span>
+
+                                    /
+
+                                    <span th:text="${totalGoals}">
+                                        0
+                                    </span>
+
+                                </h4>
+
+                                <a href="/goals">
+                                    View Goals →
+                                </a>
+
+                            </div>
+
+
+                            <!-- HABITS -->
+
+                            <div class="overview-item">
+
+                                <p>
+                                    Habits Completed
+                                </p>
+
+                                <h4>
+
+                                    <span th:text="${completedHabits}">
+                                        0
+                                    </span>
+
+                                    /
+
+                                    <span th:text="${totalHabits}">
+                                        0
+                                    </span>
+
+                                </h4>
+
+                                <a href="/habits">
+                                    View Habits →
+                                </a>
+
+                            </div>
+
+
+                            <!-- NOTES -->
+
+                            <div class="overview-item">
+
+                                <p>
+                                    Saved Notes
+                                </p>
+
+                                <h4 th:text="${totalNotes}">
+                                    0
+                                </h4>
+
+                                <a href="/notes">
+                                    View Notes →
+                                </a>
+
+                            </div>
+
+
+                            <!-- EXPENSE -->
+
+                            <div class="overview-item">
+
+                                <p>
+                                    Total Spending
+                                </p>
+
+                                <h4>
+
+                                    ₹<span th:text="${#numbers.formatDecimal(totalExpense, 1, 2)}">
+                                        0.00
+                                    </span>
+
+                                </h4>
+
+                                <a href="/expenses">
+                                    View Expenses →
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT COLUMN -->
+
+                <div>
+
+
+                    <!-- AI CARD -->
+
+                    <div class="ai-card">
+
+                        <div class="ai-heading">
+
+                            <div class="ai-icon">
+                                ✦
+                            </div>
+
+                            <div>
+
+                                <h3>
+                                    LifePilot AI
+                                </h3>
+
+                                <span>
+                                    Your personal assistant
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <p>
+
+                            Need help planning your day?
+
+                            Ask your AI assistant about
+                            tasks, productivity, goals,
+                            habits and expenses.
+
+                        </p>
+
+
+                        <a href="/ai" class="ai-button">
+                            Ask LifePilot AI →
+                        </a>
+
+                    </div>
+
+
+                    <!-- QUICK ACTIONS -->
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <h3>
+                                Quick Actions
+                            </h3>
+
+                        </div>
+
+
+                        <div class="quick-actions">
+
+                            <a href="/planner">
+                                + Add Task
+                            </a>
+
+                            <a href="/goals">
+                                + Add Goal
+                            </a>
+
+                            <a href="/habits">
+                                + Add Habit
+                            </a>
+
+                            <a href="/notes">
+                                + Add Note
+                            </a>
+
+                            <a href="/expenses">
+                                + Add Expense
+                            </a>
+
+                            <a href="/ai">
+                                ✦ Ask AI
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

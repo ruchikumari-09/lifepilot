@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Goals | LifePilot AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            padding: 9px 15px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .dashboard-btn {
+            color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .logout-btn {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .nav-btn:hover {
+            opacity: 0.82;
+        }
+
+        /* ================= MAIN ================= */
+
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 40px 25px 70px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 31px;
+            letter-spacing: -0.7px;
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .goal-count {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 9px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* ================= ADD GOAL ================= */
+
+        .add-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 34px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .add-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 21px;
+        }
+
+        .add-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .add-heading h2 {
+            font-size: 17px;
+        }
+
+        .add-heading p {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 180px;
+            gap: 13px;
+            align-items: end;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            color: #475569;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 11px 12px;
+            font-size: 12px;
+            outline: none;
+            background: #fff;
+            color: #0f172a;
+        }
+
+        .field input {
+            height: 42px;
+        }
+
+        .field textarea {
+            height: 42px;
+            resize: none;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px #eff6ff;
+        }
+
+        .add-btn {
+            height: 42px;
+            border: none;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* ================= SECTION ================= */
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 17px;
+        }
+
+        .section-header h2 {
+            font-size: 19px;
+        }
+
+        .section-header span {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        /* ================= GOALS ================= */
+
+        .goal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 17px;
+        }
+
+        .goal-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 17px;
+            padding: 20px;
+            transition: 0.22s;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-3px);
+            border-color: #bfdbfe;
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.07);
+        }
+
+        .goal-card.completed {
+            border-color: #bbf7d0;
+            background: #fbfffc;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status-pending {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .status-completed {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .goal-title {
+            font-size: 16px;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .goal-description {
+            color: #64748b;
+            font-size: 11px;
+            line-height: 1.6;
+            min-height: 36px;
+            margin-bottom: 13px;
+            white-space: pre-wrap;
+        }
+
+        .target-date {
+            color: #94a3b8;
+            font-size: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* ================= PROGRESS ================= */
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .progress-value {
+            color: #2563eb;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 7px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 17px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #6366f1);
+            border-radius: 20px;
+        }
+
+        .completed .progress-fill {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .goal-actions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .goal-actions form {
+            display: flex;
+            gap: 5px;
+            margin: 0;
+            flex: 1;
+        }
+
+        .progress-input {
+            width: 65px;
+            height: 32px;
+            border: 1px solid #e2e8f0;
+            border-radius: 7px;
+            padding: 6px;
+            font-size: 10px;
+            outline: none;
+        }
+
+        .update-btn,
+        .complete-btn,
+        .delete-btn {
+            height: 32px;
+            padding: 0 10px;
+            border: none;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .update-btn {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .complete-btn {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .delete-btn {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .update-btn:hover,
+        .complete-btn:hover,
+        .delete-btn:hover {
+            opacity: 0.78;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty-message {
+            background: white;
+            border: 1px dashed #cbd5e1;
+            border-radius: 17px;
+            padding: 55px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 13px;
+            font-size: 22px;
+        }
+
+        .empty-message h3 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .empty-message p {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            padding: 20px 6%;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 10px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 950px) {
+
+            .goal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-grid .field:first-child {
+                grid-column: span 2;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .brand {
+                font-size: 17px;
+            }
+
+            .nav-btn {
+                padding: 8px 10px;
+                font-size: 10px;
+            }
+
+            .container {
+                padding: 28px 17px 50px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-header h1 {
+                font-size: 27px;
+            }
+
+            .goal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid .field:first-child {
+                grid-column: auto;
+            }
+
+            .add-card {
+                padding: 20px;
+            }
+
+            .goal-actions form {
+                width: 100%;
+                flex: auto;
+            }
+
+            .progress-input {
+                flex: 1;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <a href="/dashboard" class="brand">
+
+            <div class="brand-icon">
+                ✦
+            </div>
+
+            LifePilot AI
+
+        </a>
+
+
+        <div class="nav-right">
+
+            <a href="/dashboard" class="nav-btn dashboard-btn">
+                ← Dashboard
+            </a>
+
+            <a href="/logout" class="nav-btn logout-btn">
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="container">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="page-header">
+
+            <div>
+
+                <h1>
+                    Goals
+                </h1>
+
+                <p>
+                    Set meaningful goals and track your progress.
+                </p>
+
+            </div>
+
+
+            <div class="goal-count">
+
+                🎯
+                <span th:text="${goals.size()}">
+                    0
+                </span>
+                Goals
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= ADD GOAL ================= -->
+
+        <section class="add-card">
+
+            <div class="add-heading">
+
+                <div class="add-icon">
+                    +
+                </div>
+
+                <div>
+
+                    <h2>
+                        Create a New Goal
+                    </h2>
+
+                    <p>
+                        Turn your plans into achievable goals.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form action="/goals/add" method="post">
+
+                <div class="form-grid">
+
+
+                    <div class="field">
+
+                        <label>
+                            Goal Title
+                        </label>
+
+                        <input type="text" name="title" placeholder="e.g. Complete Java course" required>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <textarea name="description" placeholder="Add a short description..."></textarea>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Target Date
+                        </label>
+
+                        <input type="date" name="targetDate">
+
+                    </div>
+
+
+                    <button type="submit" class="add-btn">
+
+                        + Add Goal
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- ================= GOAL LIST ================= -->
+
+        <div class="section-header">
+
+            <h2>
+                My Goals
+            </h2>
+
+            <span>
+                Track your progress
+            </span>
+
+        </div>
+
+
+        <div class="goal-grid" th:if="${!goals.isEmpty()}">
+
+
+            <div class="goal-card" th:each="goal : ${goals}" th:classappend="${goal.completed} ? ' completed' : ''">
+
+
+                <!-- STATUS -->
+
+                <div class="status-row">
+
+                    <div th:if="${goal.completed}" class="status status-completed">
+
+                        ✓ Completed
+
+                    </div>
+
+
+                    <div th:unless="${goal.completed}" class="status status-pending">
+
+                        ● In Progress
+
+                    </div>
+
+                </div>
+
+
+                <!-- TITLE -->
+
+                <h3 class="goal-title" th:text="${goal.title}">
+
+                    Goal Title
+
+                </h3>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="goal-description" th:text="${goal.description}">
+
+                    Goal description
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="target-date" th:if="${goal.targetDate != null}">
+
+                    📅 Target date:
+
+                    <span th:text="${goal.targetDate}">
+                        2026-12-31
+                    </span>
+
+                </div>
+
+
+                <!-- PROGRESS -->
+
+                <div class="progress-info">
+
+                    <span>
+                        Progress
+                    </span>
+
+                    <span class="progress-value" th:text="${goal.progress + '%'}">
+
+                        0%
+
+                    </span>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill" th:style="'width:' + ${goal.progress} + '%'">
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="goal-actions">
+
+
+                    <!-- UPDATE -->
+
+                    <form action="/goals/progress" method="post">
+
+                        <input type="number" name="progress" min="0" max="100" th:value="${goal.progress}"
+                            class="progress-input" required>
+
+                        <input type="hidden" name="id" th:value="${goal.id}">
+
+                        <button type="submit" class="update-btn">
+
+                            Update
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- COMPLETE -->
+
+                    <a th:href="@{/goals/toggle(id=${goal.id})}" class="complete-btn">
+
+                        <span th:if="${goal.completed}">
+                            Undo
+                        </span>
+
+                        <span th:unless="${goal.completed}">
+                            ✓ Complete
+                        </span>
+
+                    </a>
+
+
+                    <!-- DELETE -->
+
+                    <a th:href="@{/goals/delete(id=${goal.id})}" class="delete-btn"
+                        onclick="return confirm('Delete this goal?');">
+
+                        Delete
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= EMPTY ================= -->
+
+        <div class="empty-message" th:if="${goals.isEmpty()}">
+
+            <div class="empty-icon">
+                🎯
+            </div>
+
+            <h3>
+                No goals yet
+            </h3>
+
+            <p>
+                Create your first goal above and start making progress.
+            </p>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        LifePilot AI · Personal Life Management System
+
+    </footer>
+
+
+</body>
+
+</html>

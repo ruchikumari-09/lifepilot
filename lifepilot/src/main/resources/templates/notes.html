@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notes - LifePilot</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-buttons a {
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 9px 15px;
+            border-radius: 8px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        /* CREATE NOTE */
+
+        .create-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .create-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #667eea;
+        }
+
+        .save-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        /* SEARCH */
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
+            margin-bottom: 30px;
+        }
+
+        .search-box h2 {
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        #searchInput {
+            margin-bottom: 0;
+        }
+
+        /* NOTES */
+
+        .notes-heading {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .note-card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+        }
+
+        .note-card.pinned {
+            border-color: #f5b700;
+            background: #fffdf3;
+        }
+
+        .pinned-label {
+            display: inline-block;
+            background: #f5b700;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .note-card h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .note-content {
+            color: #666;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            min-height: 50px;
+            margin-bottom: 20px;
+        }
+
+        /* BUTTONS */
+
+        .note-footer {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .note-footer a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .pin-btn {
+            background: #fff1bd;
+            color: #9a7200;
+        }
+
+        .edit-btn {
+            background: #e8ecff;
+            color: #4c5fd7;
+        }
+
+        .delete-btn {
+            background: #ffe5e5;
+            color: #e53935;
+        }
+
+        /* NO RESULT */
+
+        #noResult {
+            display: none;
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            color: #777;
+        }
+
+        /* EMPTY */
+
+        .empty-message {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 15px 20px;
+            }
+
+            header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <header>
+
+        <h1>📝 LifePilot Notes</h1>
+
+        <div class="header-buttons">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+    </header>
+
+
+    <div class="container">
+
+
+        <!-- CREATE NOTE -->
+
+        <div class="create-box">
+
+            <h2>➕ Create New Note</h2>
+
+            <form action="/notes/add" method="post">
+
+                <input type="text" name="title" placeholder="Note title" required>
+
+                <textarea name="content" placeholder="Write your note here..."></textarea>
+
+                <button type="submit" class="save-btn">
+
+                    Save Note
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+            <h2>🔍 Search Notes</h2>
+
+            <input type="text" id="searchInput" placeholder="Search by title or content..." oninput="searchNotes()">
+
+        </div>
+
+
+        <!-- SAVED NOTES -->
+
+        <h2 class="notes-heading">
+            📚 Saved Notes
+        </h2>
+
+
+        <div class="notes-grid" th:if="${notes != null and !notes.isEmpty()}">
+
+            <div class="note-card" th:each="note : ${notes}" th:classappend="${note.pinned} ? 'pinned' : ''">
+
+
+                <!-- PINNED -->
+
+                <div class="pinned-label" th:if="${note.pinned}">
+
+                    📌 Pinned
+
+                </div>
+
+
+                <!-- TITLE -->
+
+                <h3 class="note-title" th:text="${note.title}">
+
+                    Note Title
+
+                </h3>
+
+
+                <!-- CONTENT -->
+
+                <div class="note-content" th:text="${note.content}">
+
+                    Note Content
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="note-footer">
+
+                    <a th:href="@{/notes/pin(id=${note.id})}" class="pin-btn">
+
+                        <span th:if="${note.pinned}">
+                            📌 Unpin
+                        </span>
+
+                        <span th:unless="${note.pinned}">
+                            📌 Pin
+                        </span>
+
+                    </a>
+
+
+                    <a th:href="@{/notes/edit(id=${note.id})}" class="edit-btn">
+
+                        ✏️ Edit
+
+                    </a>
+
+
+                    <a th:href="@{/notes/delete(id=${note.id})}" class="delete-btn"
+                        onclick="return confirm('Are you sure you want to delete this note?');">
+
+                        🗑️ Delete
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SEARCH RESULT -->
+
+        <div id="noResult">
+
+            🔍 No matching notes found.
+
+        </div>
+
+
+        <!-- NO NOTES -->
+
+        <div class="empty-message" th:if="${notes == null or notes.isEmpty()}">
+
+            📝 No notes yet.
+
+            <br><br>
+
+            Create your first note above!
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+
+        function searchNotes() {
+
+            let input =
+                document.getElementById("searchInput")
+                    .value
+                    .toLowerCase()
+                    .trim();
+
+            let cards =
+                document.querySelectorAll(".note-card");
+
+            let found = false;
+
+            cards.forEach(function (card) {
+
+                let title =
+                    card.querySelector(".note-title")
+                        .textContent
+                        .toLowerCase();
+
+                let content =
+                    card.querySelector(".note-content")
+                        .textContent
+                        .toLowerCase();
+
+                if (
+                    title.includes(input) ||
+                    content.includes(input)
+                ) {
+
+                    card.style.display = "";
+
+                    found = true;
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+
+            let noResult =
+                document.getElementById("noResult");
+
+
+            if (input !== "" && !found) {
+
+                noResult.style.display = "block";
+
+            } else {
+
+                noResult.style.display = "none";
+
+            }
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

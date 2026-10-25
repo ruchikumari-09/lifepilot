@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | LifePilot AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            color: #0f172a;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 620px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 26px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(15, 23, 42, 0.10);
+        }
+
+        /* LEFT */
+
+        .left {
+            padding: 55px;
+            background: linear-gradient(145deg, #eff6ff, #f5f3ff);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 21px;
+            font-weight: 800;
+            color: #2563eb;
+            margin-bottom: 55px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left h1 {
+            font-size: 42px;
+            line-height: 1.12;
+            margin-bottom: 18px;
+        }
+
+        .left h1 span {
+            color: #2563eb;
+        }
+
+        .left p {
+            color: #64748b;
+            line-height: 1.7;
+            font-size: 15px;
+            max-width: 420px;
+        }
+
+        .mini-card {
+            margin-top: 35px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 17px;
+            padding: 18px;
+            max-width: 390px;
+        }
+
+        .mini-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .mini-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: #eff6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2563eb;
+        }
+
+        .mini-card p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* RIGHT */
+
+        .right {
+            padding: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 390px;
+        }
+
+        .login-box h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 11px 13px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+        .input-group {
+            margin-bottom: 19px;
+        }
+
+        input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #dbe2ea;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-size: 14px;
+            color: #0f172a;
+            background: white;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px #dbeafe;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 48px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #64748b;
+            font-size: 17px;
+            user-select: none;
+        }
+
+        .forgot {
+            text-align: right;
+            margin-top: -7px;
+            margin-bottom: 21px;
+        }
+
+        .forgot a {
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .login-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .register {
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 23px;
+        }
+
+        .register a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .home {
+            text-align: center;
+            margin-top: 22px;
+        }
+
+        .home a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .home a:hover {
+            color: #2563eb;
+        }
+
+        @media (max-width: 800px) {
+
+            body {
+                padding: 18px;
+            }
+
+            .page {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .left {
+                display: none;
+            }
+
+            .right {
+                padding: 40px 28px;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            .right {
+                padding: 35px 22px;
+            }
+
+            .login-box h2 {
+                font-size: 27px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- LEFT SIDE -->
+
+        <div class="left">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    ✦
+                </div>
+
+                LifePilot AI
+
+            </div>
+
+            <h1>
+                Welcome back to
+                <span>your journey.</span>
+            </h1>
+
+            <p>
+                Continue managing your tasks, goals and
+                daily productivity with LifePilot AI.
+            </p>
+
+            <div class="mini-card">
+
+                <div class="mini-title">
+
+                    <div class="mini-icon">
+                        ✦
+                    </div>
+
+                    Your personal AI companion
+
+                </div>
+
+                <p>
+                    Plan your day, stay organized and
+                    make meaningful progress.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="right">
+
+            <div class="login-box">
+
+                <h2>
+                    Sign in
+                </h2>
+
+                <p class="subtitle">
+                    Login to continue to LifePilot AI
+                </p>
+
+
+                <!-- ERROR -->
+
+                <div class="error" th:if="${error != null}" th:text="${error}">
+                </div>
+
+
+                <!-- FORM -->
+
+                <form action="/login" method="post" autocomplete="on">
+
+                    <div class="input-group">
+
+                        <label>
+                            Email
+                        </label>
+
+                        <input type="email" name="email" placeholder="Enter your email" th:value="${email}"
+                            autocomplete="username" required>
+
+                    </div>
+
+
+                    <div class="input-group">
+
+                        <label>
+                            Password
+                        </label>
+
+                        <div class="password-container">
+
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                autocomplete="current-password" required>
+
+                            <span class="toggle-password" onclick="togglePassword()" title="Show/Hide Password">
+                                👁
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="forgot">
+
+                        <a href="/forgot-password">
+                            Forgot Password?
+                        </a>
+
+                    </div>
+
+
+                    <button type="submit" class="login-btn">
+
+                        Sign In →
+
+                    </button>
+
+                </form>
+
+
+                <p class="register">
+
+                    Don't have an account?
+
+                    <a href="/register">
+                        Create an account
+                    </a>
+
+                </p>
+
+
+                <div class="home">
+
+                    <a href="/">
+                        ← Back to Home
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function togglePassword() {
+
+            const password =
+                document.getElementById("password");
+
+            const eye =
+                document.querySelector(".toggle-password");
+
+            if (password.type === "password") {
+
+                password.type = "text";
+                eye.textContent = "🙈";
+
+            } else {
+
+                password.type = "password";
+                eye.textContent = "👁";
+
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

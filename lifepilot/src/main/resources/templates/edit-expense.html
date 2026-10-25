@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Expense | LifePilot AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .navbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #2563eb;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+            padding: 9px 15px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .logout-btn {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 800px;
+            margin: 45px auto 70px;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, .05);
+        }
+
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            height: 45px;
+            padding: 0 13px;
+            border: 1px solid #dbe3ec;
+            border-radius: 9px;
+            outline: none;
+            font-size: 13px;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px #eff6ff;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            min-height: 44px;
+            padding: 0 20px;
+            border-radius: 9px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            flex: 1;
+            background: #2563eb;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .cancel-btn {
+            min-width: 120px;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .cancel-btn:hover {
+            background: #e2e8f0;
+        }
+
+        footer {
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 10px;
+        }
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .back-btn {
+                display: none;
+            }
+
+            .container {
+                width: 94%;
+                margin-top: 28px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .cancel-btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <a href="/dashboard" class="brand">
+
+            <div class="brand-icon">
+                ₹
+            </div>
+
+            LifePilot AI
+
+        </a>
+
+        <div class="nav-buttons">
+
+            <a href="/expenses" class="nav-btn back-btn">
+                ← Expenses
+            </a>
+
+            <a href="/logout" class="nav-btn logout-btn">
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- MAIN -->
+
+    <main class="container">
+
+        <div class="page-header">
+
+            <h1>
+                Edit Expense
+            </h1>
+
+            <p>
+                Update your expense details and save the changes.
+            </p>
+
+        </div>
+
+
+        <section class="card">
+
+            <h2 class="card-title">
+                💰 Expense Details
+            </h2>
+
+
+            <form action="/expenses/update" method="post">
+
+                <!-- ID -->
+
+                <input type="hidden" name="id" th:value="${expense.id}">
+
+
+                <!-- AMOUNT -->
+
+                <div class="form-group">
+
+                    <label for="amount">
+                        Amount
+                    </label>
+
+                    <input type="number" id="amount" name="amount" step="0.01" min="0" th:value="${expense.amount}"
+                        placeholder="₹ 0.00" required>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Category
+                    </label>
+
+                    <select id="category" name="category" required>
+
+                        <option value="Food" th:selected="${expense.category == 'Food'}">
+                            🍔 Food
+                        </option>
+
+                        <option value="Travel" th:selected="${expense.category == 'Travel'}">
+                            🚗 Travel
+                        </option>
+
+                        <option value="Shopping" th:selected="${expense.category == 'Shopping'}">
+                            🛍️ Shopping
+                        </option>
+
+                        <option value="Education" th:selected="${expense.category == 'Education'}">
+                            📚 Education
+                        </option>
+
+                        <option value="Bills" th:selected="${expense.category == 'Bills'}">
+                            🧾 Bills
+                        </option>
+
+                        <option value="Health" th:selected="${expense.category == 'Health'}">
+                            ❤️ Health
+                        </option>
+
+                        <option value="Entertainment" th:selected="${expense.category == 'Entertainment'}">
+                            🎬 Entertainment
+                        </option>
+
+                        <option value="Other" th:selected="${expense.category == 'Other'}">
+                            📦 Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="form-group">
+
+                    <label for="expenseDate">
+                        Date
+                    </label>
+
+                    <input type="date" id="expenseDate" name="expenseDate" th:value="${expense.expenseDate}" required>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <input type="text" id="description" name="description" th:value="${expense.description}"
+                        placeholder="What was this expense for?">
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="buttons">
+
+                    <button type="submit" class="btn save-btn">
+
+                        ✓ Save Changes
+
+                    </button>
+
+                    <a href="/expenses" class="btn cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        LifePilot AI · Personal Life Management System
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Assistant - LifePilot AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            height: 90px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 42px;
+
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 30px;
+            font-weight: 700;
+
+            color: #2563eb;
+        }
+
+        .logo-icon {
+            font-size: 34px;
+        }
+
+        /* =========================
+           RIGHT SIDE
+        ========================= */
+
+        .header-actions {
+            margin-left: auto;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .clear-chat-btn,
+        .nav-btn,
+        .history-btn {
+
+            border: none;
+            cursor: pointer;
+
+            font-size: 16px;
+            font-weight: 600;
+
+            border-radius: 14px;
+
+            height: 46px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            transition: 0.2s ease;
+        }
+
+        .clear-chat-btn {
+            padding: 0 20px;
+
+            background: #fff0f0;
+            color: #dc2626;
+        }
+
+        .clear-chat-btn:hover {
+            background: #ffe1e1;
+        }
+
+        .nav-btn {
+            padding: 0 22px;
+
+            background: #eef4ff;
+            color: #2563eb;
+
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: #dfeaff;
+        }
+
+        /* =========================
+           HISTORY BUTTON
+        ========================= */
+
+        .history-wrapper {
+            position: relative;
+        }
+
+        .history-btn {
+            width: 50px;
+
+            background: #eef4ff;
+            color: #2563eb;
+
+            font-size: 30px;
+            line-height: 1;
+        }
+
+        .history-btn:hover {
+            background: #dfeaff;
+        }
+
+        /* =========================
+           HISTORY DROPDOWN
+        ========================= */
+
+        .history-menu {
+            display: none;
+
+            position: absolute;
+
+            top: 58px;
+            right: 0;
+
+            width: 340px;
+            max-height: 470px;
+
+            overflow-y: auto;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.15);
+
+            z-index: 2000;
+        }
+
+        .history-wrapper.active .history-menu {
+            display: block;
+        }
+
+        .history-header {
+            padding: 18px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            font-size: 18px;
+            font-weight: 700;
+
+            color: #1f2937;
+        }
+
+        .history-item {
+            padding: 15px 18px;
+
+            border-bottom: 1px solid #f0f0f0;
+
+            cursor: default;
+        }
+
+        .history-item:hover {
+            background: #f8faff;
+        }
+
+        .history-question {
+            font-size: 15px;
+
+            font-weight: 600;
+
+            color: #2563eb;
+
+            margin-bottom: 6px;
+
+            line-height: 1.4;
+        }
+
+        .history-answer {
+            font-size: 14px;
+
+            color: #4b5563;
+
+            line-height: 1.5;
+
+            display: -webkit-box;
+
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
+        }
+
+        .history-date {
+            margin-top: 8px;
+
+            font-size: 12px;
+
+            color: #9ca3af;
+        }
+
+        .no-history {
+            padding: 25px;
+
+            text-align: center;
+
+            color: #9ca3af;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            width: 100%;
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 30px 20px 50px;
+        }
+
+        .assistant-card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 24px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 8px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* =========================
+           CHAT AREA
+        ========================= */
+
+        .chat-area {
+            height: 500px;
+
+            padding: 28px;
+
+            overflow-y: auto;
+
+            background: #f8fafc;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 20px;
+        }
+
+        /* =========================
+           USER MESSAGE
+        ========================= */
+
+        .message-row.user {
+            display: flex;
+
+            justify-content: flex-end;
+        }
+
+        .user-message {
+            max-width: 75%;
+
+            background: #4f46e5;
+
+            color: white;
+
+            padding: 15px 18px;
+
+            border-radius: 18px 18px 4px 18px;
+
+            font-size: 16px;
+
+            line-height: 1.5;
+
+            white-space: pre-wrap;
+
+            word-break: break-word;
+        }
+
+        .user-label {
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 5px;
+
+            opacity: 0.8;
+        }
+
+        /* =========================
+           AI MESSAGE
+        ========================= */
+
+        .message-row.ai {
+            display: flex;
+
+            justify-content: flex-start;
+        }
+
+        .ai-message {
+            max-width: 82%;
+
+            background: white;
+
+            border: 1px solid #e1e7ef;
+
+            color: #374151;
+
+            padding: 18px 20px;
+
+            border-radius: 4px 18px 18px 18px;
+
+            font-size: 16px;
+
+            line-height: 1.6;
+
+            white-space: pre-wrap;
+
+            word-break: break-word;
+
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .ai-label {
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: #64748b;
+
+            margin-bottom: 8px;
+        }
+
+        /* =========================
+           EMPTY CHAT
+        ========================= */
+
+        .empty-chat {
+            flex: 1;
+
+            min-height: 400px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 55px;
+
+            margin-bottom: 15px;
+        }
+
+        .empty-chat h2 {
+            margin: 0 0 8px;
+
+            color: #334155;
+        }
+
+        .empty-chat p {
+            margin: 0;
+
+            color: #94a3b8;
+        }
+
+        /* =========================
+           INPUT AREA
+        ========================= */
+
+        .input-section {
+            padding: 22px 28px 25px;
+
+            background: white;
+
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .input-container {
+            display: flex;
+
+            align-items: flex-end;
+
+            gap: 12px;
+
+            border: 2px solid #dbe4f0;
+
+            border-radius: 18px;
+
+            padding: 10px 10px 10px 18px;
+
+            background: white;
+
+            transition: 0.2s ease;
+        }
+
+        .input-container:focus-within {
+            border-color: #6366f1;
+
+            box-shadow:
+                0 0 0 4px rgba(99, 102, 241, 0.08);
+        }
+
+        .message-input {
+            flex: 1;
+
+            border: none;
+
+            outline: none;
+
+            resize: none;
+
+            min-height: 45px;
+
+            max-height: 150px;
+
+            font-size: 16px;
+
+            font-family: inherit;
+
+            color: #1f2937;
+
+            padding: 10px 0;
+        }
+
+        .message-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: #4f46e5;
+
+            color: white;
+
+            font-size: 24px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            transition: 0.2s ease;
+        }
+
+        .send-btn:hover {
+            background: #4338ca;
+
+            transform: scale(1.04);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+        .input-help {
+            text-align: center;
+
+            margin-top: 10px;
+
+            font-size: 13px;
+
+            color: #94a3b8;
+        }
+
+        /* =========================
+           SUGGESTIONS
+        ========================= */
+
+        .suggestions {
+            margin-top: 22px;
+        }
+
+        .suggestions-title {
+            font-size: 18px;
+
+            font-weight: 700;
+
+            margin-bottom: 12px;
+
+            color: #1f2937;
+        }
+
+        .suggestion-list {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+        }
+
+        .suggestion-btn {
+            border: 1px solid #dbe5f5;
+
+            background: #f8fbff;
+
+            color: #2563eb;
+
+            padding: 10px 16px;
+
+            border-radius: 25px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition: 0.2s ease;
+        }
+
+        .suggestion-btn:hover {
+            background: #eef4ff;
+
+            border-color: #bfd2f7;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .privacy-note {
+            text-align: center;
+
+            padding: 18px;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .typing {
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 5px 0;
+        }
+
+        .typing span {
+            width: 7px;
+            height: 7px;
+
+            background: #94a3b8;
+
+            border-radius: 50%;
+
+            animation: typing 1.2s infinite;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .header {
+                height: auto;
+
+                padding: 15px 18px;
+
+                flex-wrap: wrap;
+
+                gap: 15px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .header-actions {
+                width: 100%;
+
+                justify-content: flex-end;
+
+                gap: 7px;
+            }
+
+            .clear-chat-btn {
+                padding: 0 12px;
+
+                font-size: 13px;
+            }
+
+            .nav-btn {
+                padding: 0 13px;
+
+                font-size: 13px;
+            }
+
+            .history-btn {
+                width: 44px;
+            }
+
+            .history-menu {
+                right: 0;
+
+                width: min(330px, 90vw);
+            }
+
+            .chat-area {
+                height: 450px;
+
+                padding: 18px;
+            }
+
+            .user-message,
+            .ai-message {
+                max-width: 90%;
+            }
+
+            .input-section {
+                padding: 16px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+
+    <header class="header">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                🤖
+            </span>
+
+            <span>
+                LifePilot AI
+            </span>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <!-- CLEAR CURRENT CHAT -->
+
+            <button type="button" class="clear-chat-btn" onclick="clearChat()">
+
+                🗑️ Clear Chat
+
+            </button>
+
+
+            <!-- DASHBOARD -->
+
+            <a href="/dashboard" class="nav-btn">
+
+                Dashboard
+
+            </a>
+
+
+            <!-- HOME -->
+
+            <a href="/" class="nav-btn">
+
+                Home
+
+            </a>
+
+
+            <!-- =================================================
+                 3 DOT HISTORY
+                 HOME KE BAAD / RIGHT CORNER
+            ================================================== -->
+
+            <div class="history-wrapper" id="historyWrapper">
+
+                <button type="button" class="history-btn" onclick="toggleHistory()" title="Chat History">
+
+                    ⋮
+
+                </button>
+
+
+                <!-- HISTORY DROPDOWN -->
+
+                <div class="history-menu" id="historyMenu">
+
+                    <div class="history-header">
+
+                        💬 Chat History
+
+                    </div>
+
+
+                    <!-- NO HISTORY -->
+
+                    <div th:if="${chatHistory == null || chatHistory.isEmpty()}" class="no-history">
+
+                        No chat history yet.
+
+                    </div>
+
+
+                    <!-- HISTORY ITEMS -->
+
+                    <div th:each="chat : ${chatHistory}" class="history-item">
+
+                        <div class="history-question" th:text="${chat.userMessage}">
+
+                        </div>
+
+
+                        <div class="history-answer" th:text="${chat.aiResponse}">
+
+                        </div>
+
+
+                        <div class="history-date" th:if="${chat.createdAt != null}"
+                            th:text="${#temporals.format(chat.createdAt, 'dd MMM yyyy, hh:mm a')}">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main class="main">
+
+        <div class="assistant-card">
+
+            <!-- =================================================
+                 CHAT AREA
+            ================================================== -->
+
+            <div class="chat-area" id="chatArea">
+
+
+                <!-- EMPTY CHAT -->
+
+                <div th:if="${chatHistory == null || chatHistory.isEmpty()}" class="empty-chat" id="emptyChat">
+
+                    <div class="empty-icon">
+
+                        🤖
+
+                    </div>
+
+                    <h2>
+
+                        Hi! I'm LifePilot AI
+
+                    </h2>
+
+                    <p>
+
+                        Ask me anything about your tasks,
+                        goals, habits or productivity.
+
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     SAVED CHAT HISTORY
+                ================================================== -->
+
+                <th:block th:each="chat : ${chatHistory}">
+
+
+                    <!-- USER MESSAGE -->
+
+                    <div class="message-row user">
+
+                        <div class="user-message">
+
+                            <div class="user-label">
+
+                                You
+
+                            </div>
+
+                            <div th:text="${chat.userMessage}">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AI RESPONSE -->
+
+                    <div class="message-row ai">
+
+                        <div class="ai-message">
+
+                            <div class="ai-label">
+
+                                LifePilot AI
+
+                            </div>
+
+                            <div th:text="${chat.aiResponse}">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </th:block>
+
+            </div>
+
+
+            <!-- =================================================
+                 INPUT
+            ================================================== -->
+
+            <div class="input-section">
+
+                <div class="input-container">
+
+                    <textarea id="messageInput" class="message-input" placeholder="Message LifePilot AI..."
+                        rows="1"></textarea>
+
+
+                    <button type="button" id="sendButton" class="send-btn" onclick="sendMessage()">
+
+                        ➤
+
+                    </button>
+
+                </div>
+
+
+                <div class="input-help">
+
+                    Press Enter to send • Shift + Enter for new line
+
+                </div>
+
+
+                <!-- =================================================
+                     SUGGESTIONS
+                ================================================== -->
+
+                <div class="suggestions">
+
+                    <div class="suggestions-title">
+
+                        Try asking LifePilot AI:
+
+                    </div>
+
+
+                    <div class="suggestion-list">
+
+                        <button class="suggestion-btn" onclick="askSuggestion('What should I do today?')">
+
+                            📋 Today
+
+                        </button>
+
+
+                        <button class="suggestion-btn" onclick="askSuggestion('How are my habits going?')">
+
+                            🔥 Habits
+
+                        </button>
+
+
+                        <button class="suggestion-btn" onclick="askSuggestion('What are my current goals?')">
+
+                            🎯 Goals
+
+                        </button>
+
+
+                        <button class="suggestion-btn"
+                            onclick="askSuggestion('How can I improve my productivity today?')">
+
+                            ⚡ Productivity
+
+                        </button>
+
+
+                        <button class="suggestion-btn"
+                            onclick="askSuggestion('Create a plan for today based on my pending tasks.')">
+
+                            🗓️ Daily Plan
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PRIVACY
+            ================================================== -->
+
+            <div class="privacy-note">
+
+                🔒 Your conversation is processed through your configured AI service.
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ===================================================== -->
+
+    <script>
+
+
+        /* =====================================================
+           TOGGLE HISTORY
+        ===================================================== */
+
+        function toggleHistory() {
+
+            const wrapper =
+                document.getElementById(
+                    "historyWrapper"
+                );
+
+            if (!wrapper) {
+                return;
+            }
+
+            wrapper.classList.toggle(
+                "active"
+            );
+        }
+
+
+        /* =====================================================
+           CLOSE HISTORY WHEN CLICKING OUTSIDE
+        ===================================================== */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                const wrapper =
+                    document.getElementById(
+                        "historyWrapper"
+                    );
+
+                if (!wrapper) {
+                    return;
+                }
+
+                if (!wrapper.contains(event.target)) {
+
+                    wrapper.classList.remove(
+                        "active"
+                    );
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           SEND MESSAGE
+        ===================================================== */
+
+        async function sendMessage() {
+
+            const input =
+                document.getElementById(
+                    "messageInput"
+                );
+
+            const sendButton =
+                document.getElementById(
+                    "sendButton"
+                );
+
+            const chatArea =
+                document.getElementById(
+                    "chatArea"
+                );
+
+
+            const message =
+                input.value.trim();
+
+
+            if (!message) {
+                return;
+            }
+
+
+            /* Remove empty screen */
+
+            const emptyChat =
+                document.getElementById(
+                    "emptyChat"
+                );
+
+            if (emptyChat) {
+                emptyChat.remove();
+            }
+
+
+            /* Add user message */
+
+            addUserMessage(
+                message
+            );
+
+
+            /* Clear input */
+
+            input.value = "";
+
+            input.style.height =
+                "auto";
+
+
+            /* Disable button */
+
+            sendButton.disabled =
+                true;
+
+
+            /* Show loading */
+
+            const loadingId =
+                "loading-" +
+                Date.now();
+
+            addLoadingMessage(
+                loadingId
+            );
+
+
+            try {
+
+                const formData =
+                    new URLSearchParams();
+
+
+                formData.append(
+                    "message",
+                    message
+                );
+
+
+                const response =
+                    await fetch(
+                        "/ai-assistant/ask",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded; charset=UTF-8"
+                            },
+
+                            body:
+                                formData.toString()
+                        }
+                    );
+
+
+                const answer =
+                    await response.text();
+
+
+                /* Remove loading */
+
+                removeLoadingMessage(
+                    loadingId
+                );
+
+
+                /* Show AI answer */
+
+                addAIMessage(
+                    answer
+                );
+
+
+            } catch (error) {
+
+                removeLoadingMessage(
+                    loadingId
+                );
+
+
+                addAIMessage(
+                    "Sorry, something went wrong while connecting to LifePilot AI."
+                );
+
+
+                console.error(
+                    error
+                );
+
+            }
+
+
+            sendButton.disabled =
+                false;
+
+
+            input.focus();
+
+        }
+
+
+        /* =====================================================
+           ADD USER MESSAGE
+        ===================================================== */
+
+        function addUserMessage(
+            message
+        ) {
+
+            const chatArea =
+                document.getElementById(
+                    "chatArea"
+                );
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "message-row user";
+
+
+            const bubble =
+                document.createElement(
+                    "div"
+                );
+
+            bubble.className =
+                "user-message";
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+            label.className =
+                "user-label";
+
+            label.textContent =
+                "You";
+
+
+            const text =
+                document.createElement(
+                    "div"
+                );
+
+            text.textContent =
+                message;
+
+
+            bubble.appendChild(
+                label
+            );
+
+            bubble.appendChild(
+                text
+            );
+
+            row.appendChild(
+                bubble
+            );
+
+            chatArea.appendChild(
+                row
+            );
+
+
+            scrollToBottom();
+
+        }
+
+
+        /* =====================================================
+           ADD AI MESSAGE
+        ===================================================== */
+
+        function addAIMessage(
+            message
+        ) {
+
+            const chatArea =
+                document.getElementById(
+                    "chatArea"
+                );
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "message-row ai";
+
+
+            const bubble =
+                document.createElement(
+                    "div"
+                );
+
+            bubble.className =
+                "ai-message";
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+            label.className =
+                "ai-label";
+
+            label.textContent =
+                "LifePilot AI";
+
+
+            const text =
+                document.createElement(
+                    "div"
+                );
+
+            text.textContent =
+                message;
+
+
+            bubble.appendChild(
+                label
+            );
+
+            bubble.appendChild(
+                text
+            );
+
+            row.appendChild(
+                bubble
+            );
+
+            chatArea.appendChild(
+                row
+            );
+
+
+            scrollToBottom();
+
+        }
+
+
+        /* =====================================================
+           LOADING MESSAGE
+        ===================================================== */
+
+        function addLoadingMessage(
+            id
+        ) {
+
+            const chatArea =
+                document.getElementById(
+                    "chatArea"
+                );
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "message-row ai";
+
+            row.id =
+                id;
+
+
+            const bubble =
+                document.createElement(
+                    "div"
+                );
+
+            bubble.className =
+                "ai-message";
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+            label.className =
+                "ai-label";
+
+            label.textContent =
+                "LifePilot AI";
+
+
+            const typing =
+                document.createElement(
+                    "div"
+                );
+
+            typing.className =
+                "typing";
+
+
+            typing.innerHTML =
+                "<span></span><span></span><span></span>";
+
+
+            bubble.appendChild(
+                label
+            );
+
+            bubble.appendChild(
+                typing
+            );
+
+            row.appendChild(
+                bubble
+            );
+
+            chatArea.appendChild(
+                row
+            );
+
+
+            scrollToBottom();
+
+        }
+
+
+        /* =====================================================
+           REMOVE LOADING
+        ===================================================== */
+
+        function removeLoadingMessage(
+            id
+        ) {
+
+            const element =
+                document.getElementById(
+                    id
+                );
+
+            if (element) {
+
+                element.remove();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           SUGGESTION BUTTON
+        ===================================================== */
+
+        function askSuggestion(
+            message
+        ) {
+
+            const input =
+                document.getElementById(
+                    "messageInput"
+                );
+
+
+            input.value =
+                message;
+
+
+            input.focus();
+
+
+            sendMessage();
+
+        }
+
+
+        /* =====================================================
+           CLEAR CURRENT CHAT ONLY
+           
+           IMPORTANT:
+           Database history is NOT deleted.
+           
+           The history dropdown is NOT changed.
+        ===================================================== */
+
+        async function clearChat() {
+
+            const confirmed =
+                confirm(
+                    "Clear the current chat screen?\n\nSaved chat history will remain safe."
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/ai-assistant/clear",
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Server returned " +
+                        response.status
+                    );
+
+                }
+
+
+                const result =
+                    await response.text();
+
+
+                console.log(
+                    result
+                );
+
+
+                /* =========================================
+                   CLEAR ONLY CURRENT CHAT SCREEN
+                ========================================= */
+
+                const chatArea =
+                    document.getElementById(
+                        "chatArea"
+                    );
+
+
+                chatArea.innerHTML =
+                    "";
+
+
+                /* =========================================
+                   ADD EMPTY SCREEN
+                ========================================= */
+
+                const empty =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                empty.className =
+                    "empty-chat";
+
+
+                empty.id =
+                    "emptyChat";
+
+
+                empty.innerHTML = `
+
+                    <div class="empty-icon">
+
+                        🤖
+
+                    </div>
+
+                    <h2>
+
+                        Hi! I'm LifePilot AI
+
+                    </h2>
+
+                    <p>
+
+                        Ask me anything about your tasks,
+                        goals, habits or productivity.
+
+                    </p>
+
+                `;
+
+
+                chatArea.appendChild(
+                    empty
+                );
+
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * History dropdown ko yaha
+                 * bilkul touch nahi karna hai.
+                 *
+                 * Database history safe rahegi.
+                 */
+
+
+                alert(
+                    "Current chat cleared successfully."
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Clear chat error:",
+                    error
+                );
+
+
+                alert(
+                    "Unable to clear current chat. Please try again."
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           AUTO RESIZE TEXTAREA
+        ===================================================== */
+
+        const messageInput =
+            document.getElementById(
+                "messageInput"
+            );
+
+
+        messageInput.addEventListener(
+            "input",
+            function () {
+
+                this.style.height =
+                    "auto";
+
+
+                this.style.height =
+                    Math.min(
+                        this.scrollHeight,
+                        150
+                    ) + "px";
+
+            }
+        );
+
+
+        /* =====================================================
+           ENTER TO SEND
+        ===================================================== */
+
+        messageInput.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    sendMessage();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           SCROLL CHAT TO BOTTOM
+        ===================================================== */
+
+        function scrollToBottom() {
+
+            const chatArea =
+                document.getElementById(
+                    "chatArea"
+                );
+
+
+            setTimeout(
+                function () {
+
+                    chatArea.scrollTop =
+                        chatArea.scrollHeight;
+
+                },
+                50
+            );
+
+        }
+
+
+        /* =====================================================
+           PAGE LOAD
+        ===================================================== */
+
+        window.addEventListener(
+            "load",
+            function () {
+
+                scrollToBottom();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

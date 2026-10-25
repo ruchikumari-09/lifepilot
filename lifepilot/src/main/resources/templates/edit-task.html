@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Task - LifePilot</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f5f7fb;
+        }
+
+        .navbar {
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .back-btn {
+            background: #2563eb;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0 25px;
+        }
+
+        .box {
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #222;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .update-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .update-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .cancel {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .cancel:hover {
+            color: #2563eb;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🚀 LifePilot
+        </div>
+
+        <a href="/planner" class="back-btn">
+            ← Planner
+        </a>
+
+    </nav>
+
+
+    <div class="container">
+
+        <div class="box">
+
+            <h1>✏️ Edit Task</h1>
+
+            <form action="/planner/edit" method="post">
+
+                <input type="hidden" name="id" th:value="${task.id}">
+
+                <label>Task Name</label>
+
+                <input type="text" name="title" th:value="${task.title}" placeholder="Enter task name" required>
+
+
+                <label>Description</label>
+
+                <textarea name="description" th:text="${task.description}"
+                    placeholder="Enter task description"></textarea>
+
+
+                <label>Date</label>
+
+                <input type="date" name="taskDate" th:value="${task.taskDate}" required>
+
+
+                <label>Time</label>
+
+                <input type="time" name="taskTime" th:value="${task.taskTime}">
+
+
+                <button type="submit" class="update-btn">
+
+                    💾 Update Task
+
+                </button>
+
+            </form>
+
+            <a href="/planner" class="cancel">
+                Cancel
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

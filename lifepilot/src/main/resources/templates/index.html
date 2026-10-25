@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LifePilot AI | Personal Life Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #ffffff;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        nav {
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 7%;
+
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid #eef2f7;
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            text-decoration: none;
+            color: #2563eb;
+
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 11px;
+
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+
+            box-shadow: 0 7px 18px rgba(37, 99, 235, 0.20);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #64748b;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-login {
+            padding: 10px 17px;
+
+            border: 1px solid #dbeafe;
+            border-radius: 9px;
+
+            color: #2563eb !important;
+            background: #eff6ff;
+        }
+
+        .nav-register {
+            padding: 11px 19px;
+
+            border-radius: 9px;
+
+            background: #2563eb;
+            color: white !important;
+
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.18);
+        }
+
+        .nav-register:hover {
+            background: #1d4ed8 !important;
+        }
+
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+
+            min-height: 620px;
+
+            padding: 90px 7% 85px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            background:
+                radial-gradient(circle at 50% 0%,
+                    #eef2ff 0,
+                    transparent 42%),
+                linear-gradient(180deg,
+                    #ffffff,
+                    #f8fafc);
+        }
+
+        .hero-content {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .eyebrow {
+
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 8px 14px;
+
+            background: #eff6ff;
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 30px;
+
+            color: #2563eb;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            margin-bottom: 22px;
+        }
+
+        .eyebrow-dot {
+
+            width: 7px;
+            height: 7px;
+
+            background: #2563eb;
+
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+
+            font-size: clamp(45px, 6vw, 72px);
+
+            line-height: 1.05;
+
+            letter-spacing: -3px;
+
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero-text {
+
+            max-width: 690px;
+
+            margin: auto;
+
+            color: #64748b;
+
+            font-size: 17px;
+
+            line-height: 1.8;
+
+            margin-bottom: 32px;
+        }
+
+        .hero-buttons {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+        .primary-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 9px;
+
+            padding: 14px 22px;
+
+            border-radius: 10px;
+
+            background: #2563eb;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            box-shadow:
+                0 10px 25px rgba(37, 99, 235, 0.20);
+
+            transition: 0.2s;
+        }
+
+        .primary-btn:hover {
+
+            background: #1d4ed8;
+
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 14px 22px;
+
+            border-radius: 10px;
+
+            border: 1px solid #e2e8f0;
+
+            color: #334155;
+
+            background: white;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+        }
+
+        .secondary-btn:hover {
+
+            border-color: #bfdbfe;
+
+            color: #2563eb;
+
+            background: #f8fbff;
+        }
+
+
+        /* =========================
+           HERO HIGHLIGHTS
+        ========================= */
+
+        .highlights {
+
+            max-width: 850px;
+
+            margin: 55px auto 0;
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 15px;
+        }
+
+        .highlight {
+
+            background: rgba(255, 255, 255, 0.85);
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 15px;
+
+            padding: 19px 15px;
+
+            transition: 0.2s;
+        }
+
+        .highlight:hover {
+
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 12px 30px rgba(15, 23, 42, 0.06);
+
+            border-color: #bfdbfe;
+        }
+
+        .highlight-icon {
+
+            width: 38px;
+            height: 38px;
+
+            margin: 0 auto 10px;
+
+            border-radius: 10px;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 17px;
+        }
+
+        .highlight h3 {
+
+            font-size: 13px;
+
+            margin-bottom: 5px;
+        }
+
+        .highlight p {
+
+            color: #94a3b8;
+
+            font-size: 11px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================
+           FEATURES
+        ========================= */
+
+        .features {
+
+            padding: 90px 7%;
+
+            background: white;
+
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .section-heading {
+
+            text-align: center;
+
+            max-width: 650px;
+
+            margin: 0 auto 48px;
+        }
+
+        .section-label {
+
+            color: #2563eb;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.2px;
+
+            margin-bottom: 10px;
+        }
+
+        .section-heading h2 {
+
+            font-size: 35px;
+
+            margin-bottom: 12px;
+        }
+
+        .section-heading p {
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+        .feature-grid {
+
+            max-width: 1120px;
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+        .feature {
+
+            padding: 25px;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 17px;
+
+            background: white;
+
+            transition: 0.25s;
+        }
+
+        .feature:hover {
+
+            transform: translateY(-4px);
+
+            border-color: #bfdbfe;
+
+            box-shadow:
+                0 15px 35px rgba(15, 23, 42, 0.07);
+        }
+
+        .feature-icon {
+
+            width: 43px;
+            height: 43px;
+
+            border-radius: 12px;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 18px;
+
+            margin-bottom: 17px;
+        }
+
+        .feature:nth-child(2) .feature-icon {
+
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+        .feature:nth-child(3) .feature-icon {
+
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .feature:nth-child(4) .feature-icon {
+
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+        .feature:nth-child(5) .feature-icon {
+
+            background: #fdf4ff;
+            color: #a21caf;
+        }
+
+        .feature:nth-child(6) .feature-icon {
+
+            background: #f0fdfa;
+            color: #0f766e;
+        }
+
+        .feature h3 {
+
+            font-size: 15px;
+
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           HOW IT WORKS
+        ========================= */
+
+        .how-section {
+
+            padding: 85px 7%;
+
+            background: #f8fafc;
+        }
+
+        .steps {
+
+            max-width: 950px;
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 22px;
+        }
+
+        .step {
+
+            text-align: center;
+
+            padding: 28px 20px;
+        }
+
+        .step-number {
+
+            width: 48px;
+            height: 48px;
+
+            margin: 0 auto 16px;
+
+            border-radius: 50%;
+
+            background: #2563eb;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 16px;
+
+            font-weight: 800;
+
+            box-shadow:
+                0 8px 20px rgba(37, 99, 235, 0.20);
+        }
+
+        .step h3 {
+
+            font-size: 15px;
+
+            margin-bottom: 8px;
+        }
+
+        .step p {
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           CTA
+        ========================= */
+
+        .cta {
+
+            padding: 80px 7%;
+        }
+
+        .cta-box {
+
+            max-width: 1120px;
+
+            margin: auto;
+
+            padding: 60px 30px;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(135deg,
+                    #eff6ff,
+                    #f5f3ff);
+
+            border: 1px solid #dbeafe;
+
+            text-align: center;
+        }
+
+        .cta-box h2 {
+
+            font-size: 32px;
+
+            margin-bottom: 12px;
+        }
+
+        .cta-box p {
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            margin-bottom: 26px;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            border-top: 1px solid #e5e7eb;
+
+            padding: 25px 7%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+        }
+
+        footer .footer-brand {
+
+            color: #2563eb;
+
+            font-weight: 800;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .feature-grid {
+
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .steps {
+
+                grid-template-columns: 1fr;
+
+                max-width: 600px;
+            }
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            nav {
+
+                padding: 0 20px;
+            }
+
+            .brand {
+
+                font-size: 18px;
+            }
+
+            .nav-links {
+
+                gap: 7px;
+            }
+
+            .nav-links a:not(.nav-login):not(.nav-register) {
+
+                display: none;
+            }
+
+            .nav-login,
+            .nav-register {
+
+                padding: 8px 11px;
+
+                font-size: 11px;
+            }
+
+            .hero {
+
+                min-height: auto;
+
+                padding: 70px 20px 60px;
+            }
+
+            .hero h1 {
+
+                font-size: 43px;
+
+                letter-spacing: -1.8px;
+            }
+
+            .hero-text {
+
+                font-size: 15px;
+            }
+
+            .highlights {
+
+                grid-template-columns: 1fr;
+
+                max-width: 330px;
+            }
+
+            .features {
+
+                padding: 65px 20px;
+            }
+
+            .feature-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading h2 {
+
+                font-size: 28px;
+            }
+
+            .how-section {
+
+                padding: 65px 20px;
+            }
+
+            .cta {
+
+                padding: 60px 20px;
+            }
+
+            .cta-box {
+
+                padding: 42px 20px;
+            }
+
+            .cta-box h2 {
+
+                font-size: 27px;
+            }
+
+            footer {
+
+                padding: 22px 20px;
+
+                gap: 10px;
+
+                flex-direction: column;
+
+                text-align: center;
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVBAR
+    ========================= -->
+
+    <nav>
+
+        <a href="/" class="brand">
+
+            <div class="brand-icon">
+                ✦
+            </div>
+
+            LifePilot AI
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="#features">
+                Features
+            </a>
+
+            <a href="#how-it-works">
+                How It Works
+            </a>
+
+            <a href="/login" class="nav-login">
+                Login
+            </a>
+
+            <a href="/register" class="nav-register">
+                Get Started
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+
+            <div class="eyebrow">
+
+                <span class="eyebrow-dot"></span>
+
+                Your personal life companion
+
+            </div>
+
+
+            <h1>
+
+                Organize your life.
+
+                <span>
+                    Achieve more.
+                </span>
+
+            </h1>
+
+
+            <p class="hero-text">
+
+                LifePilot AI brings your tasks, goals,
+                habits, notes and personal productivity
+                together in one simple and intelligent space.
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <a href="/register" class="primary-btn">
+
+                    Get Started
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
+
+                <a href="/login" class="secondary-btn">
+
+                    Sign In
+
+                </a>
+
+            </div>
+
+
+            <!-- HIGHLIGHTS -->
+
+            <div class="highlights">
+
+
+                <div class="highlight">
+
+                    <div class="highlight-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Stay Organized
+                    </h3>
+
+                    <p>
+                        Manage your daily tasks easily.
+                    </p>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="highlight-icon">
+                        ◉
+                    </div>
+
+                    <h3>
+                        Track Progress
+                    </h3>
+
+                    <p>
+                        Keep your goals and habits on track.
+                    </p>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="highlight-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        AI Assistance
+                    </h3>
+
+                    <p>
+                        Get smarter help for your daily life.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         FEATURES
+    ========================= -->
+
+    <section class="features" id="features">
+
+
+        <div class="section-heading">
+
+            <div class="section-label">
+                Everything in one place
+            </div>
+
+            <h2>
+                Built for your everyday life
+            </h2>
+
+            <p>
+
+                LifePilot helps you stay organized,
+                focused and in control of the things
+                that matter to you.
+
+            </p>
+
+        </div>
+
+
+
+        <div class="feature-grid">
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ✓
+                </div>
+
+                <h3>
+                    Task Management
+                </h3>
+
+                <p>
+                    Create, organize and track your
+                    daily tasks without losing focus.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ◷
+                </div>
+
+                <h3>
+                    Daily Planner
+                </h3>
+
+                <p>
+                    Plan your day with a clear view
+                    of what needs to be done.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ✦
+                </div>
+
+                <h3>
+                    AI Assistant
+                </h3>
+
+                <p>
+                    Get personalized help with planning,
+                    productivity and your daily routine.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ◉
+                </div>
+
+                <h3>
+                    Goals & Progress
+                </h3>
+
+                <p>
+                    Keep your goals visible and follow
+                    your progress over time.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ₹
+                </div>
+
+                <h3>
+                    Finance Tracking
+                </h3>
+
+                <p>
+                    Keep track of expenses, savings
+                    and your personal financial goals.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ♡
+                </div>
+
+                <h3>
+                    Personal Space
+                </h3>
+
+                <p>
+                    Keep your personal notes, habits
+                    and important information organized.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         HOW IT WORKS
+    ========================= -->
+
+    <section class="how-section" id="how-it-works">
+
+
+        <div class="section-heading">
+
+            <div class="section-label">
+                Simple and easy
+            </div>
+
+            <h2>
+                How LifePilot works
+            </h2>
+
+            <p>
+                Everything you need to manage your
+                personal life in three simple steps.
+            </p>
+
+        </div>
+
+
+
+        <div class="steps">
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    1
+                </div>
+
+                <h3>
+                    Create Your Account
+                </h3>
+
+                <p>
+                    Sign up and create your personal
+                    LifePilot space.
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    2
+                </div>
+
+                <h3>
+                    Organize Your Life
+                </h3>
+
+                <p>
+                    Manage tasks, goals, habits,
+                    notes and expenses in one place.
+                </p>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    3
+                </div>
+
+                <h3>
+                    Track Your Progress
+                </h3>
+
+                <p>
+                    See your productivity and make
+                    better decisions every day.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         CTA
+    ========================= -->
+
+    <section class="cta">
+
+        <div class="cta-box">
+
+            <h2>
+                Ready to take control of your day?
+            </h2>
+
+            <p>
+                Start your personal productivity journey
+                with LifePilot AI.
+            </p>
+
+            <a href="/register" class="primary-btn">
+
+                Create Your Account
+
+                <span>
+                    →
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <div class="footer-brand">
+            LifePilot AI
+        </div>
+
+        <div>
+            Personal Life Management System
+        </div>
+
+        <div>
+            © 2026 LifePilot AI
+        </div>
+
+    </footer>
+
+
+</body>
+
+</html>

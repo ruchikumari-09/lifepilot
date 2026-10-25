@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Progress - LifePilot</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #222;
+            min-height: 100vh;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-buttons a {
+            text-decoration: none;
+            color: white;
+            padding: 9px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .dashboard-btn {
+            background: #2563eb;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+        }
+
+        .dashboard-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* ================= CONTAINER ================= */
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        /* ================= WELCOME ================= */
+
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .welcome p {
+            color: #777;
+        }
+
+        /* ================= OVERALL ================= */
+
+        .overall-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .overall-card h2 {
+            margin-bottom: 20px;
+        }
+
+        .overall-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .overall-bar {
+            width: 100%;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .overall-fill {
+            height: 100%;
+            background: white;
+            border-radius: 20px;
+        }
+
+        /* ================= SECTION ================= */
+
+        .section-title {
+            margin: 25px 0 18px;
+            color: #333;
+        }
+
+        /* ================= CARDS ================= */
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,
+                    minmax(280px, 1fr));
+
+            gap: 20px;
+        }
+
+        .progress-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+
+            border-left: 5px solid #667eea;
+        }
+
+        .task-card {
+            border-left-color: #2563eb;
+        }
+
+        .habit-card {
+            border-left-color: #16a34a;
+        }
+
+        .goal-card {
+            border-left-color: #f59e0b;
+        }
+
+        .card-icon {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .progress-card h3 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .progress-card p {
+            color: #777;
+            margin-bottom: 18px;
+        }
+
+        /* ================= STAT ================= */
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .stats strong {
+            color: #333;
+        }
+
+        /* ================= PROGRESS BAR ================= */
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .task-fill {
+            background: #2563eb;
+        }
+
+        .habit-fill {
+            background: #16a34a;
+        }
+
+        .goal-fill {
+            background: #f59e0b;
+        }
+
+        .percentage {
+            text-align: right;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            text-align: center;
+            color: #777;
+            padding: 35px 20px;
+            margin-top: 30px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 15px 20px;
+            }
+
+            header h1 {
+                font-size: 20px;
+            }
+
+            .header-buttons a {
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+
+            .overall-number {
+                font-size: 40px;
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+
+        <h1>
+            📊 LifePilot Progress
+        </h1>
+
+        <div class="header-buttons">
+
+            <a href="/dashboard" class="dashboard-btn">
+                Dashboard
+            </a>
+
+            <a href="/logout" class="logout-btn">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <div class="container">
+
+
+        <!-- WELCOME -->
+
+        <div class="welcome">
+
+            <h2>
+                Welcome, <span th:text="${user.name}">User</span>! 👋
+            </h2>
+
+            <p>
+                Track your productivity and see how far you have progressed.
+            </p>
+
+        </div>
+
+
+        <!-- ================= OVERALL ================= -->
+
+        <div class="overall-card">
+
+            <h2>
+                🌟 Overall Progress
+            </h2>
+
+            <div class="overall-number" th:text="${overallProgress + '%'}">
+
+                0%
+
+            </div>
+
+            <div class="overall-bar">
+
+                <div class="overall-fill" th:style="'width:' + ${overallProgress} + '%'">
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= PROGRESS DETAILS ================= -->
+
+        <h2 class="section-title">
+            📈 Your Progress
+        </h2>
+
+
+        <div class="progress-grid">
+
+
+            <!-- ================= TASKS ================= -->
+
+            <div class="progress-card task-card">
+
+                <div class="card-icon">
+                    📋
+                </div>
+
+                <h3>
+                    Tasks
+                </h3>
+
+                <p>
+                    Track your completed and pending tasks.
+                </p>
+
+                <div class="stats">
+
+                    <span>
+                        Completed
+                    </span>
+
+                    <strong th:text="${completedTasks}">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="stats">
+
+                    <span>
+                        Pending
+                    </span>
+
+                    <strong th:text="${pendingTasks}">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill task-fill" th:style="'width:' + ${taskProgress} + '%'">
+
+                    </div>
+
+                </div>
+
+                <div class="percentage" th:text="${taskProgress + '%'}">
+
+                    0%
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= HABITS ================= -->
+
+            <div class="progress-card habit-card">
+
+                <div class="card-icon">
+                    🔄
+                </div>
+
+                <h3>
+                    Habits
+                </h3>
+
+                <p>
+                    Track your completed habits.
+                </p>
+
+                <div class="stats">
+
+                    <span>
+                        Completed
+                    </span>
+
+                    <strong th:text="${completedHabits}">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="stats">
+
+                    <span>
+                        Total Habits
+                    </span>
+
+                    <strong th:text="${totalHabits}">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill habit-fill" th:style="'width:' + ${habitProgress} + '%'">
+
+                    </div>
+
+                </div>
+
+                <div class="percentage" th:text="${habitProgress + '%'}">
+
+                    0%
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= GOALS ================= -->
+
+            <div class="progress-card goal-card">
+
+                <div class="card-icon">
+                    🎯
+                </div>
+
+                <h3>
+                    Goals
+                </h3>
+
+                <p>
+                    Track your goal completion and progress.
+                </p>
+
+                <div class="stats">
+
+                    <span>
+                        Completed
+                    </span>
+
+                    <strong th:text="${completedGoals}">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="stats">
+
+                    <span>
+                        Total Goals
+                    </span>
+
+                    <strong th:text="${totalGoals}">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill goal-fill" th:style="'width:' + ${goalProgress} + '%'">
+
+                    </div>
+
+                </div>
+
+                <div class="percentage" th:text="${goalProgress + '%'}">
+
+                    0%
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        © 2026 LifePilot | Progress Dashboard
+
+    </footer>
+
+
+</body>
+
+</html>

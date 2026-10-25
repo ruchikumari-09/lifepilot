@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expenses | LifePilot AI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 6%;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            text-decoration: none;
+            color: #2563eb;
+
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            text-decoration: none;
+
+            padding: 9px 15px;
+
+            border-radius: 9px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .dashboard-btn {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .logout-btn {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        /* ================= CONTAINER ================= */
+
+        .container {
+            width: 92%;
+            max-width: 1150px;
+
+            margin: 38px auto 60px;
+        }
+
+        /* ================= HEADER ================= */
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* ================= SUMMARY CARDS ================= */
+
+        .summary-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            border-radius: 18px;
+
+            padding: 25px;
+
+            color: white;
+
+            box-shadow: 0 10px 30px rgba(15, 23, 42, .08);
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+
+        .monthly-card {
+            background: linear-gradient(135deg, #0891b2, #2563eb);
+        }
+
+        .summary-label {
+            font-size: 12px;
+
+            opacity: .85;
+
+            margin-bottom: 8px;
+        }
+
+        .summary-amount {
+            font-size: 30px;
+
+            font-weight: 800;
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+            box-shadow: 0 8px 25px rgba(15, 23, 42, .04);
+        }
+
+        .card-title {
+            font-size: 18px;
+
+            margin-bottom: 20px;
+        }
+
+        /* ================= CATEGORY ================= */
+
+        .category-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+
+            gap: 14px;
+        }
+
+        .category-card {
+            background: #f8fafc;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 17px;
+        }
+
+        .category-name {
+            font-size: 12px;
+
+            color: #64748b;
+
+            margin-bottom: 8px;
+        }
+
+        .category-amount {
+            font-size: 20px;
+
+            font-weight: 800;
+
+            color: #0f172a;
+        }
+
+        /* ================= ADD EXPENSE ================= */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 16px;
+        }
+
+        .form-group label {
+            display: block;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #334155;
+
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+
+            height: 44px;
+
+            padding: 0 12px;
+
+            border: 1px solid #dbe3ec;
+
+            border-radius: 9px;
+
+            outline: none;
+
+            background: white;
+
+            font-size: 13px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #60a5fa;
+
+            box-shadow: 0 0 0 3px #eff6ff;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .add-btn {
+            background: #2563eb;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 9px;
+
+            padding: 12px 22px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* ================= SEARCH ================= */
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+
+            height: 44px;
+
+            border: 1px solid #dbe3ec;
+
+            border-radius: 9px;
+
+            padding: 0 14px;
+
+            outline: none;
+
+            font-size: 13px;
+        }
+
+        .search-box input:focus {
+            border-color: #60a5fa;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            box-shadow: 0 8px 25px rgba(15, 23, 42, .04);
+        }
+
+        .table-header {
+            padding: 20px 22px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 18px;
+        }
+
+        .expense-count {
+            color: #64748b;
+
+            font-size: 12px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 700px;
+        }
+
+        th {
+            background: #f8fafc;
+
+            color: #64748b;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            padding: 14px 18px;
+
+            text-align: left;
+
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 16px 18px;
+
+            font-size: 13px;
+
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        tr:hover td {
+            background: #fafcff;
+        }
+
+        .amount {
+            font-weight: 800;
+        }
+
+        .category {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+        .description,
+        .date {
+            color: #64748b;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+            display: flex;
+
+            gap: 7px;
+        }
+
+        .action-btn {
+            text-decoration: none;
+
+            padding: 7px 10px;
+
+            border-radius: 7px;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            border: none;
+
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #eff6ff;
+
+            color: #2563eb;
+        }
+
+        .delete-btn {
+            background: #fef2f2;
+
+            color: #dc2626;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty-state {
+            text-align: center;
+
+            padding: 50px 20px;
+
+            color: #64748b;
+        }
+
+        .empty-icon {
+            font-size: 38px;
+
+            margin-bottom: 12px;
+        }
+
+        .empty-state h3 {
+            color: #334155;
+
+            margin-bottom: 7px;
+        }
+
+        /* ================= NO RESULT ================= */
+
+        #noResult {
+            display: none;
+
+            text-align: center;
+
+            padding: 35px;
+
+            color: #64748b;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            border-top: 1px solid #e5e7eb;
+
+            background: white;
+
+            text-align: center;
+
+            padding: 20px;
+
+            color: #94a3b8;
+
+            font-size: 10px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .dashboard-btn {
+                display: none;
+            }
+
+            .container {
+                width: 94%;
+
+                margin-top: 25px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <a href="/dashboard" class="brand">
+
+            <div class="brand-icon">
+                ₹
+            </div>
+
+            LifePilot AI
+
+        </a>
+
+
+        <div class="nav-buttons">
+
+            <a href="/dashboard" class="nav-btn dashboard-btn">
+
+                Dashboard
+
+            </a>
+
+            <a href="/logout" class="nav-btn logout-btn">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="container">
+
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <h1>
+                💰 Expenses
+            </h1>
+
+            <p>
+                Track, manage and understand your spending.
+            </p>
+
+        </div>
+
+
+
+        <!-- ================= SUMMARY ================= -->
+
+        <div class="summary-grid">
+
+
+            <!-- TOTAL -->
+
+            <div class="summary-card total-card">
+
+                <div class="summary-label">
+                    Total Expenses
+                </div>
+
+                <div class="summary-amount">
+
+                    ₹<span th:text="${#numbers.formatDecimal(totalExpense, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- MONTHLY -->
+
+            <div class="summary-card monthly-card">
+
+                <div class="summary-label">
+                    This Month
+                </div>
+
+                <div class="summary-amount">
+
+                    ₹<span th:text="${#numbers.formatDecimal(monthlyExpense, 1, 2)}">
+
+                        0.00
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= CATEGORY BREAKDOWN ================= -->
+
+        <section class="card">
+
+            <h2 class="card-title">
+                📊 Spending by Category
+            </h2>
+
+
+            <div class="category-grid" th:if="${categoryTotals != null and !categoryTotals.isEmpty()}">
+
+
+                <div class="category-card" th:each="entry : ${categoryTotals}">
+
+                    <div class="category-name" th:text="${entry.key}">
+
+                        Food
+
+                    </div>
+
+                    <div class="category-amount">
+
+                        ₹<span th:text="${#numbers.formatDecimal(entry.value, 1, 2)}">
+
+                            0.00
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div th:if="${categoryTotals == null or categoryTotals.isEmpty()}" class="empty-state">
+
+                No category data available yet.
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= ADD EXPENSE ================= -->
+
+        <section class="card">
+
+            <h2 class="card-title">
+                ➕ Add New Expense
+            </h2>
+
+
+            <form action="/expenses/add" method="post">
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Amount
+                        </label>
+
+                        <input type="number" name="amount" step="0.01" min="0" placeholder="₹ 0.00" required>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Category
+                        </label>
+
+                        <select name="category" required>
+
+                            <option value="">
+                                Select category
+                            </option>
+
+                            <option value="Food">
+                                🍔 Food
+                            </option>
+
+                            <option value="Travel">
+                                🚗 Travel
+                            </option>
+
+                            <option value="Shopping">
+                                🛍️ Shopping
+                            </option>
+
+                            <option value="Education">
+                                📚 Education
+                            </option>
+
+                            <option value="Bills">
+                                🧾 Bills
+                            </option>
+
+                            <option value="Health">
+                                ❤️ Health
+                            </option>
+
+                            <option value="Entertainment">
+                                🎬 Entertainment
+                            </option>
+
+                            <option value="Other">
+                                📦 Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Date
+                        </label>
+
+                        <input type="date" name="expenseDate" th:value="${today}" required>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <input type="text" name="description" placeholder="What was this expense for?">
+
+                    </div>
+
+
+
+                    <div class="full-width">
+
+                        <button type="submit" class="add-btn">
+
+                            + Add Expense
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- ================= SEARCH ================= -->
+
+        <div class="search-box">
+
+            <input type="text" id="searchInput" placeholder="🔍 Search category or description..."
+                oninput="searchExpenses()">
+
+        </div>
+
+
+
+        <!-- ================= EXPENSE TABLE ================= -->
+
+        <section class="table-card">
+
+
+            <div class="table-header">
+
+                <h2>
+                    Recent Expenses
+                </h2>
+
+                <span class="expense-count" id="expenseCount">
+
+                    Expenses
+
+                </span>
+
+            </div>
+
+
+
+            <div class="table-wrapper" th:if="${expenses != null and !expenses.isEmpty()}">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr th:each="expense : ${expenses}" class="expense-row">
+
+
+                            <td>
+
+                                <span class="amount">
+
+                                    ₹<span th:text="${#numbers.formatDecimal(expense.amount, 1, 2)}">
+
+                                        0.00
+
+                                    </span>
+
+                                </span>
+
+                            </td>
+
+
+
+                            <td>
+
+                                <span class="category expense-category" th:text="${expense.category}">
+
+                                    Food
+
+                                </span>
+
+                            </td>
+
+
+
+                            <td>
+
+                                <span class="description expense-description"
+                                    th:text="${expense.description != null and !expense.description.isEmpty() ? expense.description : '—'}">
+
+                                    —
+
+                                </span>
+
+                            </td>
+
+
+
+                            <td>
+
+                                <span class="date" th:text="${expense.expenseDate}">
+
+                                    2026-01-01
+
+                                </span>
+
+                            </td>
+
+
+
+                            <td>
+
+                                <div class="actions">
+
+
+                                    <a th:href="@{/expenses/edit(id=${expense.id})}" class="action-btn edit-btn">
+
+                                        ✏️ Edit
+
+                                    </a>
+
+
+                                    <form action="/expenses/delete" method="post" style="display:inline;">
+
+                                        <input type="hidden" name="id" th:value="${expense.id}">
+
+                                        <button type="submit" class="action-btn delete-btn"
+                                            onclick="return confirm('Are you sure you want to delete this expense?');">
+
+                                            🗑️ Delete
+
+                                        </button>
+
+                                    </form>
+
+
+                                </div>
+
+                            </td>
+
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+
+            <!-- EMPTY -->
+
+            <div class="empty-state" th:if="${expenses == null or expenses.isEmpty()}">
+
+                <div class="empty-icon">
+                    💸
+                </div>
+
+                <h3>
+                    No expenses yet
+                </h3>
+
+                <p>
+                    Add your first expense above.
+                </p>
+
+            </div>
+
+
+            <div id="noResult">
+
+                🔍 No matching expenses found.
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        LifePilot AI · Personal Life Management System
+
+    </footer>
+
+
+
+    <script>
+
+        function searchExpenses() {
+
+            const input =
+                document.getElementById("searchInput")
+                    .value
+                    .toLowerCase()
+                    .trim();
+
+
+            const rows =
+                document.querySelectorAll(".expense-row");
+
+
+            const noResult =
+                document.getElementById("noResult");
+
+
+            let found = false;
+
+
+            rows.forEach(function (row) {
+
+                const category =
+                    row.querySelector(".expense-category")
+                        .textContent
+                        .toLowerCase();
+
+
+                const description =
+                    row.querySelector(".expense-description")
+                        .textContent
+                        .toLowerCase();
+
+
+                if (
+                    category.includes(input) ||
+                    description.includes(input)
+                ) {
+
+                    row.style.display = "";
+
+                    found = true;
+
+                } else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+
+            if (input !== "" && !found) {
+
+                noResult.style.display = "block";
+
+            } else {
+
+                noResult.style.display = "none";
+
+            }
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
