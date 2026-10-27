@@ -1,18 +1,34 @@
+# =========================
+# Build Stage
+# =========================
 FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
+# Copy Maven wrapper and project files
 COPY . .
 
-RUN chmod +x mvnw
+# Make Maven wrapper executable
+RUN chmod +x ./mvnw
+
+# Build Spring Boot application
 RUN ./mvnw clean package -DskipTests
 
+
+# =========================
+# Runtime Stage
+# =========================
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
+# Copy generated JAR
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 8080
+# Render uses PORT environment variable.
+# 10000 is the default fallback.
+EXPOSE 10000
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Start Spring Boot application
+# Bind to 0.0.0.0 so Render can access it.
+ENTRYPOINT ["sh", "-c", "java -jar app.jar --server.port=${PORT:-10000} --server.address=0.0.0.0"]
